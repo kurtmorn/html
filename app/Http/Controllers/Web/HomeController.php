@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Models\Item;
 use App\Models\Inventory;
+use App\Models\Status;
 use App\Models\ForumThread;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,19 +19,23 @@ class HomeController extends Controller
 
     public function dashboard()
     {
+        $friends = [];
         $updates = ForumThread::where([
             ['topic_id', '=', config('site.updates_forum_topic_id')],
             ['is_deleted', '=', false]
-        ])->orderBy('created_at', 'DESC')->get()->take(4);
+        ])->orderBy('created_at', 'DESC')->get()->take(5);
 
-        $items = Item::where([
-            ['status', '=', 'approved'],
-            ['public_view', '=', true]
-        ])->whereIn('type', config('site.catalog_recent_item_types'))->orderBy('updated_at', 'DESC')->get()->take(6);
+        foreach (Auth::user()->friends() as $friend)
+            $friends[] = $friend->id;
+
+        $statuses = Status::where([
+            ['creator_id', '!=', Auth::user()->id],
+            ['message', '!=', null]
+        ])->whereIn('creator_id', $friends)->orderBy('created_at', 'DESC')->take(10)->get();
 
         return view('web.home.dashboard')->with([
             'updates' => $updates,
-            'items' => $items
+            'statuses' => $statuses
         ]);
     }
 
@@ -50,5 +55,20 @@ class HomeController extends Controller
         }
 
         return redirect()->route('catalog.item', [$item->id, $item->slug()]);
+    }
+    public function status(Request $request)
+    {
+        $this->validate($request, [
+            'message' => ['max:124']
+        ]);
+
+        if ($request->message != Auth::user()->status()) {
+            $status = new Status;
+            $status->creator_id = Auth::user()->id;
+            $status->message = $request->message;
+            $status->save();
+        }
+
+        return back()->with('success_message', 'Status has been changed.');
     }
 }

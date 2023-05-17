@@ -2,22 +2,22 @@
 
 return [
     'name' => env('APP_NAME'),
-    'logo' => '/img/logo_Halloween.png',
-    'icon' => '/img/icon_Halloween.png',
+    'logo' => '/img/favicon.png',
+    'icon' => '/img/favicon.png',
 
-    'paypal_email' => 'sb-psukd6665118@business.example.com',
-    'paypal_sandbox' => true,
+    'paypal_email' => 'user48029@gmail.com',
+    'paypal_sandbox' => false,
 
     'route_domains' => [
-        'admin_site' => 'west.otorium.local',
-        'main_site' => 'otorium.local',
-        'jobs_site' => 'jobs.otorium.local'
+        'admin_site' => 'west.avatoria.com',
+        'main_site' => 'www.avatoria.com',
+        'jobs_site' => 'jobs.avatoria.com'
     ],
 
-    'storage_url' => 'http://cdn.otorium.local',
+    'storage_url' => 'http://cdn.avatoria.com',
     'referral_url' => 'https://avsq.link',
 
-    'official_thumbnail' => '/img/official-thumbnails/avasquare.png',
+    'official_thumbnail' => '/img/official-thumbnails/favicon.png',
 
     'updates_forum_topic_id' => 1,
 
@@ -41,9 +41,9 @@ return [
     'membership_bg_color' => '#ffc113',
 
     'renderer' => [
-        'url' => 'http://south.otorium.local',
+        'url' => 'http://xml.avatoria.com/',
         'key' => 'dAktdYZ2SBABYCmK',
-        'default_filename' => '40oFb9RYEBLwvzPNse3Ajh623',
+        'default_filename' => 'default',
         'previews_enabled' => true
     ],
 
@@ -54,7 +54,7 @@ return [
 
     'admin_panel_code' => '',
     'maintenance_passwords' => [
-        'testermanonly'
+        'Avatoriateamonly'
     ],
 
     'catalog_item_types' => ['home', 'hat', 'face', 'gadget', 'shirt', 'pants', 'crate', 'bundle'],

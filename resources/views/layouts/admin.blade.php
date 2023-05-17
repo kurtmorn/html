@@ -132,7 +132,7 @@
         <nav class="navbar navbar-expand-md border-bottom mb-4">
             <div class="container">
                 <a href="{{ route('admin.index') }}" class="navbar-brand">
-                    <img src="{{ config('site.logo') }}" width="150px">
+                    <img src="{{ config('site.icon') }}" width="30px">
                 </a>
 
                 <ul class="navbar-nav mr-auto">

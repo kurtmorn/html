@@ -1,7 +1,7 @@
 :root {
     --brand_color: #4d94ff;
     --brand_color_darkened: #437fd8;
-    --font_family: 'Source Sans Pro', sans-serif;
+    --font_family: 'Rubik', sans-serif;
     --divider_color: #2c2f35;
 
     --body_bg: #1a1c20;
@@ -15,7 +15,7 @@
 
     --headshot_bg: #454b57;
 
-    --navbar_bg: #22252b;
+    --navbar_bg: #d02148;
     --navbar_color: #fff;
     --navbar_border_color: transparent;
     --navbar_box_shadow: 0 0 5px #13131360;

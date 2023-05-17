@@ -69,7 +69,7 @@ class UsersController extends Controller
 
                 return back()->with('success_message', "User password has been changed to <strong>{$password}</strong>.");
             case 'ip_ban':
-                $ipBans = IPBan::where('unbanned_id', '=', null)->whereIn('ip', $user->ips())->get();
+                $ipBans = IPBan::where('unbanner_id', '=', null)->whereIn('ip', $user->ips())->get();
                 $ipBanned = $ipBans->count() > 0;
                 $message = 'User has been IP banned.';
 

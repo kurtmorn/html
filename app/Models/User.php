@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Group;
 use App\Models\Trade;
 use App\Models\Friend;
+use App\Models\Status;
 use App\Models\Message;
 use App\Models\UserBan;
 use App\Models\Purchase;
@@ -56,7 +57,14 @@ class User extends Authenticatable
     {
         return UserAvatar::where('user_id', '=', $this->id)->first();
     }
+  
+    public function status()
+    {
+        $status = Status::where('creator_id', '=', $this->id)->orderBy('created_at', 'DESC')->first();
 
+        return $status->message ?? null;
+    }
+  
     public function setting()
     {
         return $this->belongsTo('App\Models\UserSettings', 'id');
@@ -270,7 +278,7 @@ class User extends Authenticatable
         $url = config('site.storage_url');
         $image = ($this->avatar()->image == 'default') ? config('site.renderer.default_filename') : $this->avatar()->image;
 
-        return "{$url}/{$image}.png";
+        return "{$url}/thumbnails/{$image}.png";
     }
 
     public function headshot()
@@ -283,7 +291,7 @@ class User extends Authenticatable
 
         $image = ($this->avatar()->image == 'default') ? config('site.renderer.default_filename') : $this->avatar()->image;
 
-        return "{$url}/{$image}_headshot.png";
+        return "{$url}/thumbnails/{$image}_headshot.png";
     }
 
     /**
@@ -516,7 +524,15 @@ class User extends Authenticatable
             ['is_deleted', '=', false]
         ])->count();
     }
-
+    
+     public function forumReplyCount()
+    {
+        return ForumReply::where([
+            ['creator_id', '=', $this->id],
+            ['is_deleted', '=', false]
+        ])->count();
+    }
+  
     public function messageCount()
     {
         return Message::where([

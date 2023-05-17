@@ -2,11 +2,12 @@
 
 Route::group(['as' => 'home.'], function() {
     Route::get('/', 'HomeController@index')->name('index')->middleware('guest');
-    Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard')->middleware('auth');
+    Route::get('/dash', 'HomeController@dashboard')->name('dashboard')->middleware('auth');
+    Route::post('/dash/status', 'HomeController@status')->name('status')->middleware('auth');
     Route::get('/admin', 'HomeController@admin')->name('admin')->middleware('auth');
 });
 
-Route::group(['as' => 'info.', 'prefix' => 'info'], function() {
+Route::group(['as' => 'info.', 'prefix' => 'document'], function() {
     Route::get('/{article}', 'InfoController@index')->name('index');
 });
 
@@ -25,7 +26,7 @@ Route::group(['as' => 'auth.', 'namespace' => 'Auth'], function() {
             Route::post('/', 'LoginController@authenticate')->name('authenticate');
         });
 
-        Route::group(['as' => 'register.', 'prefix' => 'register'], function() {
+        Route::group(['as' => 'register.', 'prefix' => 'sign-up'], function() {
             Route::get('/', 'RegisterController@index')->name('index');
             Route::get('/{referralCode}', 'RegisterController@index')->name('referred');
             Route::post('/', 'RegisterController@authenticate')->name('authenticate');
@@ -76,7 +77,7 @@ Route::group(['as' => 'account.', 'namespace' => 'Account', 'prefix' => 'account
             Route::post('/', 'SettingsController@update')->name('update');
         });
 
-        Route::group(['as' => 'friends.', 'prefix' => 'friends'], function() {
+        Route::group(['as' => 'friends.', 'prefix' => 'friend-requests'], function() {
             Route::get('/', 'FriendsController@index')->name('index');
             Route::post('/', 'FriendsController@update')->name('update');
         });
@@ -129,7 +130,7 @@ Route::group(['as' => 'catalog.', 'prefix' => 'market'], function() {
     Route::post('/take-off-sale', 'CatalogController@takeOffSale')->name('take_off_sale')->middleware('auth');
 });
 
-Route::group(['as' => 'forum.', 'prefix' => 'forum'], function() {
+Route::group(['as' => 'forum.', 'prefix' => 'discussion'], function() {
     Route::get('/', 'ForumController@index')->name('index');
     Route::get('/leaderboard', 'ForumController@leaderboard')->name('leaderboard')->middleware('auth');
     Route::get('/search', 'ForumController@search')->name('search')->middleware('auth');
@@ -148,18 +149,18 @@ Route::group(['as' => 'creator_area.', 'prefix' => 'create', 'middleware' => 'au
 });
 
 Route::group(['as' => 'users.'], function() {
-    Route::group(['prefix' => 'users'], function() {
-        Route::get('/search', 'UsersController@index')->name('index');
+    Route::group(['prefix' => 'people'], function() {
+        Route::get('/', 'UsersController@index')->name('index');
     });
 
-    Route::group(['prefix' => 'profile/{username}'], function() {
+    Route::group(['prefix' => 'user/{username}/profile'], function() {
         Route::get('/', 'UsersController@profile')->name('profile');
         Route::get('/friends', 'UsersController@friends')->name('friends');
-        Route::get('/spaces', 'UsersController@groups')->name('groups');
+        Route::get('/clubs', 'UsersController@groups')->name('groups');
     });
 });
 
-Route::group(['as' => 'groups.', 'prefix' => 'spaces'], function() {
+Route::group(['as' => 'groups.', 'prefix' => 'clubs'], function() {
     Route::get('/', 'GroupsController@index')->name('index');
     Route::get('/{id}/{slug}', 'GroupsController@view')->name('view');
     Route::get('/{id}/{slug}/manage', 'GroupsController@manage')->name('manage')->middleware('auth');
@@ -169,6 +170,6 @@ Route::group(['as' => 'groups.', 'prefix' => 'spaces'], function() {
     Route::post('/set-primary', 'GroupsController@setPrimary')->name('set_primary')->middleware('auth');
 });
 
-Route::group(['as' => 'badges.', 'prefix' => 'badges'], function() {
+Route::group(['as' => 'badges.', 'prefix' => 'acheivements'], function() {
     Route::get('/', 'BadgesController@index')->name('index');
 });

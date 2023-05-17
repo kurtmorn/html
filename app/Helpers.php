@@ -100,7 +100,7 @@ function render($id, $type)
     $url = config('site.renderer.url');
     $key = config('site.renderer.key');
 
-    $response = Http::get("{$url}?seriousKey={$key}&type={$type}&id={$id}");
+    $response = Http::get("{$url}?key={$key}&type={$type}&id={$id}");
 
     return ($type != 'preview') ? $response->successful() : $response->json()['thumbnail'];
 }

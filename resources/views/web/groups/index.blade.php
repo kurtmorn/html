@@ -49,7 +49,7 @@
 @section('content')
     <div class="row mb-1">
         <div class="col">
-            <h3>Spaces</h3>
+            <h3>Clubs</h3>
         </div>
         <div class="col text-right">
             <a href="{{ route('creator_area.index', ['t' => 'group']) }}" class="btn btn-success"><i class="fas fa-plus"></i> Create</a>
@@ -79,13 +79,13 @@
                                 <a href="{{ route('groups.view', [$group->id, $group->slug()]) }}">{{ $group->name }}</a>
                             </div>
                             <div class="group-member-count">{{ number_format($group->member_count) }} Members</div>
-                            <div class="group-description">{{ $group->description ?? 'This space does not have a description.' }}</div>
+                            <div class="group-description">{{ $group->description ?? 'This club does not have a description.' }}</div>
                         </div>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="col">No spaces found.</div>
+            <div class="col">No clubs found.</div>
         @endforelse
     </div>
     {{ $groups->onEachSide(1) }}

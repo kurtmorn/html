@@ -28,35 +28,16 @@
 @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-md-8">
-            <h3>Dashboard</h3>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 text-center">
-                            <a href="{{ route('users.profile', Auth::user()->username) }}">
-                                <img class="user-headshot" src="{{ Auth::user()->headshot() }}">
-                            </a>
-                            <a href="{{ route('account.invite.index') }}" class="btn btn-block btn-primary mt-3 mb-3">Invite</a>
-                        </div>
-                        <div class="col-md-9">
-                            <h4 class="text-center-sm">Welcome, {{ Auth::user()->username }}</h4>
-                            <form action="{{ route('account.settings.update') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="category" value="general">
-                                <input type="hidden" name="username" value="{{ Auth::user()->username }}">
-                                <input type="hidden" name="email" value="{{ Auth::user()->email }}">
-                                <label for="description">Description</label>
-                                <textarea class="form-control mb-3" name="description" placeholder="Hi there, my name is {{ Auth::user()->username }}!" rows="5">{{ Auth::user()->description }}</textarea>
-                                <button class="btn btn-success" type="submit">Update</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
+<h3>Dashboard</h3>
+		<div class="row">
+			<div class="col-md-4 col-lg-3">
+				<div class="card text-center">
+					<div class="card-body">
+						<img src="{{ Auth::user()->thumbnail() }}" width="90%">
+					</div>
+				</div>
+              <button class="btn btn-success btn-block">Invite Friends</button>
+              <br>
             <h3>Updates</h3>
             <div class="card">
                 <div class="card-body" @if ($updates->count() > 0) style="padding-top:0;padding-bottom:0;" @endif>
@@ -71,52 +52,44 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="row">
-                <div class="col">
-                    <h3>Recent Items</h3>
-                </div>
-                <div class="col text-right">
-                    <a href="{{ route('catalog.index') }}" class="btn btn-sm btn-success">View All</a>
-                </div>
-            </div>
+        <div class="col-md-8 col-lg-9">
             <div class="card">
                 <div class="card-body">
-                    <div class="row">
-                        @forelse ($items as $item)
-                            <div class="col-6 col-md-2">
-                                <div class="card mb-sm-only" style="border:none;">
-                                    <div class="card-body" style="padding:0;">
-                                        <a href="{{ route('catalog.item', [$item->id, $item->slug()]) }}" style="color:inherit;font-weight:600;">
-                                            @if ($item->limited)
-                                                <div class="bg-primary text-white text-center" style="border-radius:50%;width:30px;height:30px;position:absolute;margin-left:5px;margin-top:5px;">
-                                                    <span style="font-size:20px;font-weight:600;margin-top:7px;">C</span>
-                                                </div>
-                                            @elseif ($item->isTimed())
-                                                <div class="bg-danger text-white text-center" style="border-radius:50%;width:30px;height:30px;position:absolute;margin-left:5px;margin-top:5px;">
-                                                    <span style="font-size:17px;font-weight:600;"><i class="fas fa-clock" style="margin-top:6.5px;"></i></span>
-                                                </div>
-                                            @endif
-                                            <img style="background:var(--section_bg_inside);border-radius:6px;padding:{{ itemTypePadding($item->type) }};" src="{{ $item->thumbnail() }}">
-                                            <div class="text-truncate mt-1">{{ $item->name }}</div>
-                                        </a>
-
-                                        @if ($item->onsale() && $item->price == 0)
-                                            <span class="text-success">Free</span>
-                                        @elseif (!$item->onsale())
-                                            <span class="text-muted">Off Sale</span>
-                                        @else
-                                            <span><i class="currency"></i> {{ number_format($item->price) }}</span>
-                                        @endif
-                                    </div>
+                            <form action="{{ route('home.status') }}" method="POST">
+                                @csrf
+                                <div class="input-group">
+                                <input class="form-control" name="message" placeholder="Hi there, my name is {{ Auth::user()->username }}!">
+                                <div class="input-group-append">
+                                <button class="btn btn-success" type="submit">Update</button>
                                 </div>
-                            </div>
-                        @empty
-                            <div class="col">No items found.</div>
-                        @endforelse
+                              </div>
+                            </form>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div>   
+   <div class="card">
+		<div class="card-body">
+       @forelse ($statuses as $status)
+          <div class="row has-divider py-16">
+								<div class="col-4 col-md-3 col-lg-2 text-center">
+									<a href="{{ route('users.profile', $status->creator->username) }}">
+										<img class="user-headshot" src="{{ $status->creator->headshot() }}">
+									</a>
+								</div>
+								<div class="col-8 col-md-9 col-lg-10 align-self-center">
+									<div>
+										<a href="{{ route('users.profile', $status->creator->username) }}" style="font-size:18px;">{{ $status->creator->username }}</a>
+										<span class="text-muted ml-2" style="font-size:12px;"><i class="fas fa-clock" style="font-size:10px;"></i> 15 minutes ago</span>
+										<a href="/report" class="float-right text-danger"><i class="fad fa-flag"></i></a>
+									</div>
+									<div class="mb-2">{{ $status->message }}</div>
+								</div>
+							</div>
+          @empty
+          <h5 class="mt-16">Your feed is empty.</h5>
+						<div class="mb-16">Why not try <a href="/users">searching for users</a> or <a href="/discussions">chatting with users</a> on the discussions tab?</div> 
+
+          @endforelse
     </div>
+   </div>
+</div>      
 @endsection

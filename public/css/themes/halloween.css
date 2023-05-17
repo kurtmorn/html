@@ -1,6 +1,18 @@
+html {
+    min-height: 100%;
+}
+
+body {
+    background-image: url('../../img/events/halloween/spiders.png'), url('../../img/events/halloween/cobwebs.png'), url('../../img/events/halloween/spiders.png');
+    background-repeat: no-repeat;
+    background-size: 230px, 300px, 230px;
+    background-position: right 0px top 50px, right 0px bottom 0px, left 30px top 50px;
+    min-height: 100%;
+}
+
 :root {
-    --brand_color: #db7d22;
-    --brand_color_darkened: #c4711f;
+    --brand_color: #6f20c6;
+    --brand_color_darkened: #5a199e;
     --font_family: 'Source Sans Pro', sans-serif;
     --divider_color: #2c3143;
 
@@ -9,9 +21,9 @@
     --link_color: #f6b352;
     --link_color_hover: #dd9e45;
 
-    --currency_icon_normal: url('/img/currency_new.png');
-    --currency_icon_light: url('/img/currency_new_white.png');
-    --currency_icon_navbar: url('/img/currency_new.png');
+    --currency_icon_normal: url('/img/currency.png');
+    --currency_icon_light: url('/img/currency_white.png');
+    --currency_icon_navbar: url('/img/currency.png');
 
     --headshot_bg: #363c52;
 
@@ -19,7 +31,7 @@
     --navbar_color: #fff;
     --navbar_border_color: transparent;
     --navbar_box_shadow: 0 0 5px #131313;
-    --navbar_headshot_bg: #363c52;
+    --navbar_headshot_bg: #5a199e;
 
     --sidebar_bg: #1f2331;
     --sidebar_bg_hover: #363c52;

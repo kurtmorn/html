@@ -26,9 +26,14 @@
                 <div class="col-3"><h3>Users</h3></div>
                 <div class="col-9 text-right mt-1"><strong>{{ number_format($total) }} Total Users</strong></div>
             </div>
-            <form action="{{ route('users.index') }}" method="GET">
+          <div class="card">
+            <div class="card-body">
+               <form action="{{ route('users.index') }}" method="GET">
                 <input class="form-control mb-3" type="text" name="search" placeholder="Search..." value="{{ request()->search }}">
             </form>
+            </div>
+          </div>
+           
             @if (!empty($search))
                 <div class="row">
                     @forelse ($users as $user)

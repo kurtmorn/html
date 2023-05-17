@@ -1,4 +1,7 @@
-<!DOCTYPE html> 
+@php
+//die("stop resetting db, fixing leaderboards: adding vite. you can find this message in the layouts folder.")
+@endphp
+<!DOCTYPE html>  
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -27,12 +30,13 @@
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.3/css/all.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Ubuntu:regular,bold&subset=Latin">
+
     @yield('fonts')
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('css/stylesheet.css') }}">
-    <link rel="stylesheet" href="{{ (Auth::check()) ? asset('css/themes/' . Auth::user()->setting->theme . '.css?v=' . rand()) : asset('css/themes/light.css?v=' . rand()) }}">
+    <link rel="stylesheet" href="{{ (Auth::check()) ? asset('css/themes/' . Auth::user()->setting->theme . '.css?v=' . rand()) : asset('css/themes/dark.css?v=' . rand()) }}">
     <style>
         a:not([href]):not([class]) {
             color: var(--link_color);
@@ -91,65 +95,19 @@
             width: 35px!important;
             text-align: center;
         }
-       .first-bar {
-             background: var(--brand_color);
-             box-shadow: none;
-       }
-       .second-bar {
-             background: var(--brand_color_darkened);
-             box-shadow: none;
-       }
     </style>
     @yield('css')
 </head>
 <body>
-  <header>
-<nav class="navbar navbar-expand-md first-bar">
-	<div class="container">
-      <a class="navbar-brand show-sm-only" style="padding-right:30px;"></a>
-       <a href="{{ (Auth::check()) ? route('home.dashboard') : route('home.index') }}" class="navbar-brand">
-            <img src="{{ config('site.icon') }}" width="40px">
+    <nav class="navbar navbar-expand-md fixed-top">
+        <button class="navbar-toggler" id="sidebarToggler" style="border:none;" type="button">
+            <i class="fas fa-bars" style="font-size: 23px;"></i>
+        </button>
+
+        <a href="{{ (Auth::check()) ? route('home.dashboard') : route('home.index') }}" class="navbar-brand">
+            <img src="{{ config('site.logo') }}" width="150px">
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
-			<i class="fas fa-bars"></i>
-		</button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-					<a href="{{ route('catalog.index') }}" class="nav-link">
-						<i class="fas fa-shopping-bag"></i>
-						<span class="mb-0">Market</span>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="{{ route('users.index') }}" class="nav-link">
-						<i class="fas fa-users"></i>
-						<span>People</span>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="{{ route('forum.index') }}" class="nav-link">
-						<i class="fas fa-comment-smile"></i>
-						<span>Discussion</span>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="{{ route('groups.index') }}" class="nav-link">
-						<i class="fas fa-building"></i>
-						<span>Clubs</span>
-					</a>
-				</li>
-              
-             @if (Auth::check() && Auth::user()->isStaff())
-             <li class="nav-item">
-                <a href="{{ route('admin.index') }}" class="nav-link">
-                    <i class="fas fa-gavel"></i>
-                    <span class="sidebar-text">Panel</span>
-                </a>
-            </li>  
-            @endif
-              
-			</ul>
+
         @guest
             <div class="nav-item show-sm-only"></div>
         @else
@@ -158,6 +116,25 @@
                     <img src="{{ Auth::user()->headshot() }}" width="40px">
                 </a>
                 <div class="dropdown-menu">
+                    <a href="{{ route('users.profile', Auth::user()->username) }}" class="dropdown-item">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
+
+                    @if (site_setting('character_enabled'))
+                        <a href="{{ route('account.character.index') }}" class="dropdown-item">
+                            <i class="fas fa-tshirt"></i>
+                            <span>Character</span>
+                        </a>
+                    @endif
+
+                    @if (site_setting('settings_enabled'))
+                        <a href="{{ route('account.settings.index', '') }}" class="dropdown-item">
+                            <i class="fas fa-wrench"></i>
+                            <span>Settings</span>
+                        </a>
+                    @endif
+
                     <a href="{{ route('auth.logout') }}" class="dropdown-item">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
@@ -165,6 +142,13 @@
                 </div>
             </div>
         @endguest
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav mr-auto" style="width:50%;">
+                <span><i class="fas fa-search"></i></span>
+                <input class="navbar-search" id="navbarSearch" placeholder="Search for users, items and spaces...">
+            </ul>
+
             <ul class="navbar-nav ml-auto">
                 @guest
                     <li class="nav-item hide-sm">
@@ -182,41 +166,9 @@
                         </li>
                     @endif
                 @else
-                 @if (Auth::check() && Auth::user()->isStaff())
-                    <li class="nav-item">
-						<a href="{{ route('admin.asset_approval.index', '') }}" class="nav-link">
-							<i class="fas fa-tshirt"></i>
-							<span>{{ number_format(pendingAssetsCount()) }}</span>
-						</a>
-					</li>
-                    <li class="nav-item">
-						<a href="{{ route('admin.reports.index') }}" class="nav-link">
-							<i class="fas fa-flag"></i>
-							<span>{{ number_format(pendingReportsCount()) }}</span>
-						</a>
-					</li>
-                @endif
-                    <li class="nav-item">
-						<a href="{{ route('account.trades.index', '') }}" class="nav-link">
-							<i class="fas fa-exchange"></i>
-							<span>{{ number_format(Auth::user()->tradeCount()) }}</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="{{ route('account.inbox.index', '') }}" class="nav-link">
-							<i class="fas fa-inbox"></i>
-							<span>{{ number_format(Auth::user()->messageCount()) }}</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="{{ route('account.friends.index') }}" class="nav-link">
-							<i class="fas fa-user-plus"></i>
-							<span>{{ number_format(Auth::user()->friendRequestCount()) }}</span>
-						</a>
-					</li>
                     <li class="nav-item">
                         <a href="{{ route('account.money.index', '') }}" class="nav-link" title="{{ str_replace('from now', '', Auth::user()->next_currency_payout->diffForHumans()) }} until next reward" data-toggle="tooltip">
-                            <i class="far fa-usd-circle"></i>
+                            <i class="currency"></i>
                             <span>{{ number_format(Auth::user()->currency) }}</span>
                         </a>
                     </li>
@@ -225,6 +177,25 @@
                             <img src="{{ Auth::user()->headshot() }}" width="40px">
                         </a>
                         <div class="dropdown-menu" style="margin-left:-100px;">
+                            <a href="{{ route('users.profile', Auth::user()->username) }}" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>Profile</span>
+                            </a>
+
+                            @if (site_setting('character_enabled'))
+                                <a href="{{ route('account.character.index') }}" class="dropdown-item">
+                                    <i class="fas fa-tshirt"></i>
+                                    <span>Character</span>
+                                </a>
+                            @endif
+
+                            @if (site_setting('settings_enabled'))
+                                <a href="{{ route('account.settings.index', '') }}" class="dropdown-item">
+                                    <i class="fas fa-wrench"></i>
+                                    <span>Settings</span>
+                                </a>
+                            @endif
+
                             <a href="{{ route('auth.logout') }}" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Logout</span>
@@ -233,75 +204,133 @@
                     </li>
                 @endguest
             </ul>
-      </div>
-  </div>
-</nav>
-</header>
-  @auth
-  <nav class="navbar navbar-expand-sm second-bar" id="main-bar">
-   <div class="container">
-  <ul class="navbar-nav">
-                    <li class="nav-item">
-						<a href="{{ (Auth::check()) ? route('home.dashboard') : route('home.index') }}" class="nav-link">
-							<i class="fas fa-home"></i>
-							<span>Home</span>
-						</a>
-					</li>
-                    @if (site_setting('settings_enabled'))
-                    <li class="nav-item">
-						<a href="{{ route('account.settings.index', '') }}" class="nav-link">
-							<i class="fas fa-wrench"></i>
-							<span>Settings</span>
-						</a>
-					</li>
-                    @endif
-                   @if (site_setting('character_enabled'))
-                   <li class="nav-item">
-						<a href="{{ route('account.character.index') }}" class="nav-link">
-							<i class="fas fa-male"></i>
-							<span>Character</span>
-						</a>
-					</li>
-                    @endif
-                    <li class="nav-item">
-						<a href="{{ route('users.profile', Auth::user()->username) }}" class="nav-link">
-							<i class="fas fa-user"></i>
-							<span>Profile</span>
-						</a>
-					</li>
-                    <li class="nav-item">
-						<a href="{{ route('creator_area.index') }}" class="nav-link">
-							<i class="fas fa-plus"></i>
-							<span>Create</span>
-						</a>
-					</li>
-                    <li class="nav-item">
-						<a href="{{ route('account.money.index', '') }}" class="nav-link">
-							<i class="fas fa-cash-register"></i>
-							<span>Money</span>
-						</a>
-					</li>
-                    <li class="nav-item">
-						<a href="{{ route('account.promocodes.index') }}" class="nav-link">
-							<i class="fas fa-medal"></i>
-							<span>Promocodes</span>
-						</a>
-					</li>
-                   @if (site_setting('real_life_purchases_enabled'))
-					<li class="nav-item">
-						<a href="{{ route('account.upgrade.index') }}" class="nav-link">
-							<i class="fas fa-rocket"></i>
-							<span>Level Up</span>
-						</a>
-					</li>
-                   @endif
-					
-    </ul>
+        </div>
+    </nav>
+    <div class="navbar-search-dropdown-parent">
+        <div class="navbar-search-dropdown" id="navbarSearchResults" style="display:none;"></div>
     </div>
-  </nav>
-  @endauth
-  <br>
-<main class="container">
+
+    <nav class="sidebar">
+        <div class="mb-2"></div>
+        <div class="mt-2 show-sm-only"></div>
+        <div class="show-sm-only" style="padding-left: 5px; padding-right: 5px;">
+            <form action="{{ route('users.index') }}" method="GET">
+                <input class="form-control" style="height: 38px;" type="text" name="search" placeholder="Search Avasquare..." @if (request()->route()->getName() == 'users.index') value="{{ request()->search }}" @endif>
+            </form>
+        </div>
+        <div class="mb-1 show-sm-only"></div>
+        @guest
+            <div class="show-sm-only">
+                <div class="section-div">AUTH</div>
+                <a href="{{ route('auth.login.index') }}">
+                    <i class="fas fa-user sidebar-icon"></i>
+                    <span class="sidebar-text">Login</span>
+                </a>
+                @if (site_setting('registration_enabled'))
+                    <a href="{{ route('auth.register.index') }}">
+                        <i class="fas fa-user-plus sidebar-icon"></i>
+                        <span class="sidebar-text">Register</span>
+                    </a>
+                @endif
+            </div>
+        @else
+            <div class="show-sm-only">
+                <a href="{{ route('account.money.index', '') }}">
+                    <i class="currency"></i>
+                    <span class="sidebar-text">{{ number_format(Auth::user()->currency) }} Currency</span>
+                </a>
+            </div>
+        @endguest
+        <div class="section-div">NAVIGATION</div>
+        <a href="{{ (Auth::check()) ? route('home.dashboard') : route('home.index') }}">
+            <i class="fas fa-house-user sidebar-icon"></i>
+            <span class="sidebar-text">Home</span>
+        </a>
+        <a href="{{ route('catalog.index') }}">
+            <i class="fas fa-store sidebar-icon"></i>
+            <span class="sidebar-text">Market</span>
+        </a>
+
+        @if (site_setting('forum_enabled'))
+            <a href="{{ route('forum.index') }}">
+                <i class="fas fa-comment-alt sidebar-icon"></i>
+                <span class="sidebar-text">Forum</span>
+            </a>
+        @endif
+
+        @if (site_setting('groups_enabled'))
+            <a href="{{ route('groups.index') }}">
+                <i class="fas fa-planet-ringed sidebar-icon"></i>
+                <span class="sidebar-text">Spaces</span>
+            </a>
+        @endif
+
+        <a href="{{ route('users.index') }}">
+            <i class="fas fa-telescope sidebar-icon"></i>
+            <span class="sidebar-text">Search</span>
+        </a>
+
+        @auth
+            <a href="{{ route('account.promocodes.index') }}">
+                <i class="fas fa-ticket-alt sidebar-icon"></i>
+                <span class="sidebar-text">Promocodes</span>
+            </a>
+            @if (site_setting('real_life_purchases_enabled'))
+                <a href="{{ route('account.upgrade.index') }}">
+                    <i class="fas fa-rocket sidebar-icon"></i>
+                    <span class="sidebar-text">Upgrade</span>
+                </a>
+            @endif
+            <div class="section-div">PERSONAL</div>
+            <a href="{{ route('account.money.index', '') }}">
+                <i class="fas fa-money-bill-alt sidebar-icon"></i>
+                <span class="sidebar-text">Money</span>
+            </a>
+            <a href="{{ route('account.friends.index') }}">
+                <i class="fas fa-user-friends sidebar-icon"></i>
+                <span class="sidebar-text">Friends</span>
+                @if (Auth::user()->friendRequestCount() > 0)
+                    <span class="notification float-right">{{ number_format(Auth::user()->friendRequestCount()) }}</span>
+                @endif
+            </a>
+            <a href="{{ route('account.inbox.index', '') }}">
+                <i class="fas fa-inbox sidebar-icon"></i>
+                <span class="sidebar-text">Inbox</span>
+                @if (Auth::user()->messageCount() > 0)
+                    <span class="notification float-right">{{ number_format(Auth::user()->messageCount()) }}</span>
+                @endif
+            </a>
+            @if (site_setting('trading_enabled'))
+                <a href="{{ route('account.trades.index', '') }}">
+                    <i class="fas fa-exchange sidebar-icon"></i>
+                    <span class="sidebar-text">Trades</span>
+                    @if (Auth::user()->tradeCount() > 0)
+                        <span class="notification float-right">{{ number_format(Auth::user()->tradeCount()) }}</span>
+                    @endif
+                </a>
+            @endif
+
+            @if (Auth::user()->isStaff())
+                <a href="{{ route('admin.index') }}">
+                    <i class="fas fa-gavel sidebar-icon"></i>
+                    <span class="sidebar-text">Panel</span>
+                    @if (pendingAssetsCount() > 0 || pendingReportsCount() > 0)
+                        <span class="notification float-right">
+                            @if (pendingAssetsCount() > 0)
+                                <span>(A: {{ number_format(pendingAssetsCount()) }})</span>
+                            @endif
+
+                            @if (pendingReportsCount() > 0)
+                                <span>(R: {{ number_format(pendingReportsCount()) }})</span>
+                            @endif
+                        </span>
+                    @endif
+                </a>
+            @endif
+        @endauth
+    </nav>
+
+    <div class="container-custom">
         @if (site_setting('alert_enabled') && site_setting('alert_message'))
             <div class="alert alert-site text-center mb-4" style="background:{{ site_setting('alert_background_color') }};color:{{ site_setting('alert_text_color') }};">
                 <div class="row">
@@ -345,8 +374,9 @@
         @endif
 
         @yield('content')
-</main>
-  <footer class="container text-center mb-5 mt-5" style="padding-top:0;">
+    </div>
+
+    <footer class="container-custom text-center mb-5 mt-5" style="padding-top:0;">
         <div class="mb-2" style="font-size:17px;">
             <a href="{{ route('info.index', 'terms') }}" class="text-muted mr-3" style="text-decoration:none;">TERMS</a>
             <a href="{{ route('info.index', 'privacy') }}" class="text-muted mr-3" style="text-decoration:none;">PRIVACY</a>
@@ -372,8 +402,8 @@
             </div>
         @endif
     </footer>
-  
- <!-- JS -->
+
+    <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -397,5 +427,5 @@
     </script>
     <script src="{{ asset('js/search.js') }}"></script>
     @yield('js')
-  </body> 
+</body>
 </html>

@@ -15,21 +15,11 @@ return [
         'is_visible' => true,
         'official_only' => true,
         'limiteds_only' => false,
-        'title' => 'Assorted Crate #2',
+        'title' => 'Crates',
         'name_like' => null,
         'item_types' => [],
         'item_ids' => [
-            437,
-            434,
-            428,
-            431,
-            436,
-            427,
-            435,
-            430,
-            432,
-            429,
-            433
+            7
         ]
     ],
     [
@@ -60,34 +50,12 @@ return [
         'item_ids' => []
     ],
     [
-        'is_visible' => true,
+        'is_visible' => false,
         'official_only' => false,
         'limiteds_only' => false,
         'title' => 'Featured User Creations',
         'name_like' => null,
         'item_types' => [],
-        'item_ids' => [
-            444,
-            425,
-            100,
-            176,
-            73,
-            290,
-            74,
-            421,
-            358,
-            272,
-            269,
-            257,
-            226,
-            253,
-            12,
-            14,
-            16,
-            11,
-            276,
-            232,
-            455
-        ]
+        'item_ids' => []
     ]
 ];
